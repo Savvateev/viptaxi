@@ -18,6 +18,7 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
@@ -42,24 +43,51 @@ class YandexMapActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         // Initialize MapKit before setContentView
         MapKitFactory.setApiKey("218804d1-2df9-4356-941b-a1da6fbae09f")
         MapKitFactory.initialize(this)
+        var status = intent.getStringExtra("PORT_STATUS")
         val binding = ActivityYandexMapBinding.inflate(layoutInflater)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_yandex_map)
 
+        if (status == "R") {
+            binding.orderButton.text = getString(R.string.orderTaxiText)
+        } else {
+            binding.orderButton.text = getString(R.string.unOrderTaxiText)
+            binding.text.text = getString(R.string.searchDriverText)
+        }
+
+        setContentView(binding.root)
         mapView = findViewById(R.id.mapview)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         checkLocationPermissionAndShowLocation()
-        binding.buttonAction.setOnClickListener {
-            lifecycleScope.launch {
-                sshCommand("interface enable ether2")
 
+        // выставляем текст
+
+        binding.orderButton.setOnClickListener {
+            lifecycleScope.launch {
+                if (status == "R") {
+                    val confirmed = showConfirmDialog("Подтвердить заказ")
+                    if (confirmed) {
+                        sshCommand("interface disable ether2")
+                        binding.orderButton.text = getString(R.string.unOrderTaxiText)
+                        binding.text.text = getString(R.string.searchDriverText)
+                        status = "X"
+                    }
+
+                } else {
+                    val confirmed = showConfirmDialog("Отменить заказ")
+                    if (confirmed) {
+                        sshCommand("interface enaable ether2")
+                        binding.orderButton.text = getString(R.string.orderTaxiText)
+                        binding.text.text = ""
+                        status = "R"
+                    }
+                }
             }
         }
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -74,11 +102,16 @@ class YandexMapActivity : AppCompatActivity() {
     }
 
     private fun checkLocationPermissionAndShowLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             try {
                 showUserLocation()
             } catch (e: SecurityException) {
-                Toast.makeText(this, "Нет разрешения на доступ к геолокации", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Нет разрешения на доступ к геолокации", Toast.LENGTH_SHORT)
+                    .show()
             }
         } else {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -97,16 +130,34 @@ class YandexMapActivity : AppCompatActivity() {
                     )
                     if (userPlacemark == null) {
                         userPlacemark = mapView.map.mapObjects.addPlacemark(userPoint)
-                        userPlacemark?.setIcon(ImageProvider.fromResource(this, R.drawable.ic_user_marker))
+                        userPlacemark?.setIcon(
+                            ImageProvider.fromResource(
+                                this,
+                                R.drawable.ic_user_marker
+                            )
+                        )
+                        userPlacemark?.setIconStyle (
+                            IconStyle().apply {
+                                scale = 0.1f  // уменьшение размера до 50%
+                            }
+                        )
                     } else {
                         userPlacemark?.geometry = userPoint
                     }
                 } else {
-                    Toast.makeText(this, "Не удалось получить текущее местоположение", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Не удалось получить текущее местоположение",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         } catch (e: SecurityException) {
-            Toast.makeText(this, "Ошибка безопасности: нет разрешения на геолокацию", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Ошибка безопасности: нет разрешения на геолокацию",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 }

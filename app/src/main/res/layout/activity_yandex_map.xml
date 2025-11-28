@@ -1,15 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:title="VIP Taxi"
-        android:titleTextColor="@android:color/white" />
+    android:layout_height="match_parent"
+    android:background="@color/black">
 
     <com.yandex.mapkit.mapview.MapView
         android:id="@+id/mapview"
@@ -17,17 +10,35 @@
         android:layout_height="500dp" />
 
     <Button
-        android:id="@+id/button_action"
+        android:id="@+id/order_button"
         android:layout_width="250dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
-        android:text="Заказать такси" />
+        android:backgroundTint="@color/button_color"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:text="@string/orderTaxiText" />
 
-    <EditText
-        android:id="@+id/edit_text"
+    <TextView
+        android:id="@+id/text"
         android:layout_width="300dp"
         android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:gravity="center"
+        android:layout_gravity="center" />
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:textColorLink="@color/button_color"
+        android:textColorHint="@color/button_color"
+        android:textColor="@color/white"
+        android:text="карта/наличка"
         android:layout_gravity="center"
-        android:hint="Введите текст" />
+        />
 
 </LinearLayout>

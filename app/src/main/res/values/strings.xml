@@ -7,4 +7,7 @@
     <string name="previous">Previous</string>
     <string name="port">ether2</string>
     <string name="OutOfServiceMessage">отсутствует доступ в интернет или сервис временно недоступен</string>
+    <string name="orderTaxiText">Заказать такси</string>
+    <string name="unOrderTaxiText">Отменить заказ</string>
+    <string name="searchDriverText">Идет поиск водителя.....</string>
 </resources>

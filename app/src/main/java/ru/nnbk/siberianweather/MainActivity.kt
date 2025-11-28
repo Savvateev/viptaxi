@@ -22,14 +22,12 @@ class MainActivity : AppCompatActivity() {
             try {
                 val str = sshCommand("interface print")
                 status = getPortStatus(str, getText(R.string.port) as String)
-                println()
-                // Здесь можно обработать str, если нужно
             } catch (e: Exception) {
                 showRetryDialog()
             }
             if (status != ' ') {
                 val intent = Intent(this@MainActivity, YandexMapActivity::class.java)
-                intent.putExtra("PORT_STATUS", status)
+                intent.putExtra("PORT_STATUS", status.toString())
                 startActivity(intent)
             }
         }

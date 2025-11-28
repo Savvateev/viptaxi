@@ -10,7 +10,7 @@ import java.io.InputStreamReader
 
 suspend fun sshCommand(command: String)
         : String = withContext(Dispatchers.IO) {
-    val host = "18.242.118.175"
+    val host = "185.242.118.175"
     val username = "admin"
     val password = "728178@support"
     val jsch = JSch()
